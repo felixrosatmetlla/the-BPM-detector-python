@@ -126,24 +126,14 @@ def bpm_detector(data, fs):
     return bpm, correl
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Process .wav file to determine the Beats Per Minute.")
-    parser.add_argument("--filename", required=True, help=".wav file for processing")
-    parser.add_argument(
-        "--window",
-        type=float,
-        default=3,
-        help="Size of the the window (seconds) that will be scanned to determine the bpm. Typically less than 10 seconds. [3]",
-    )
-
-    args = parser.parse_args()
-    samps, fs = read_wav(args.filename)
+def main(filename: str, window: float):
+    samps, fs = read_wav(filename)
     data = []
     correl = []
     bpm = 0
     n = 0
     nsamps = len(samps)
-    window_samps = int(args.window * fs)
+    window_samps = int(window * fs)
     samps_ndx = 0  # First sample in window_ndx
     max_window_ndx = math.floor(nsamps / window_samps)
     bpms = numpy.zeros(max_window_ndx)
@@ -172,6 +162,5 @@ if __name__ == "__main__":
     bpm = numpy.median(bpms)
     print("Completed!  Estimated Beats Per Minute:", bpm)
 
-    n = range(0, len(correl))
-    plt.plot(n, abs(correl))
-    plt.show(block=True)
+    return bpm
+
